@@ -1,5 +1,5 @@
 nginx:
-    container_name: nginx-virtual-hosts
+    container_name: nginx-vhosts
     build: .
     ports:
         - 8080:80

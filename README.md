@@ -11,5 +11,5 @@ chmod 600 acme.json
 
 
 ```
-htpasswd -nb admin secure_password
+htpasswd -nb profe chequejant
 ```

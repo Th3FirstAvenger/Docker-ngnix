@@ -1,9 +1,103 @@
-nginx:
-    container_name: nginx-vhosts
-    build: .
+version: '2'
+
+services:
+  traefik:
+    image: traefik:1.7.6-alpine
+    restart: always
     ports:
-        - 8080:80
-        - 4443:443
+      - 80:80
+      - 443:443
+    networks:
+      - web
     volumes:
-        - ./www/:/var/www/:ro
-        - ./sites-enabled/:/etc/nginx/sites-enabled/
+      - $PWD/acme.json:/acme.json
+      - $PWD/traefik.toml:/traefik.toml 
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - traefik.frontend.rule=Host:$MONITOR_DOMAIN
+      - traefik.port=8080
+
+  web11:
+    image: nginx
+    restart: always
+    volumes:
+      - ./web11:/usr/share/nginx/html:ro
+    labels:
+      - traefik.backend=web11
+      - traefik.frontend.rule=Host:$web11
+      - traefik.docker.network=web
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+
+  web22:
+    image: nginx
+    restart: always
+    volumes:
+      - ./web22:/usr/share/nginx/html:ro
+    labels:
+      - traefik.backend=web22
+      - traefik.frontend.rule=Host:$web22
+      - traefik.docker.network=web
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+
+  
+  mariaDB:
+    image: mariadb:latest
+    restart: always
+    volumes:
+     - ./database:/var/lib/mysql:rw
+    expose:
+     - "3306" 
+    labels:
+     - "traefik.enable=false" 
+    environment:
+     - MYSQL_ROOT_PASSWORD=$MYSQL_PASS
+    networks:
+      - internal
+      - web
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8090:8080
+    labels:
+     - "traefik.frontend.rule=Host:$DB_DOMAIN"
+    depends_on:
+     - mariaDB
+    networks:
+      - internal
+      - web
+
+  wordpress:
+    image: wordpress
+    restart: always
+    depends_on:
+      - mariaDB
+    environment:
+     - WORDPRESS_DB_HOST=$DB_HOST
+     - WORDPRESS_DB_NAME=$DB_NAME
+     - WORDPRESS_TABLE_PREFIX=$DB_PREFIX
+     - WORDPRESS_DB_USER=$DB_USER
+     - WORDPRESS_DB_PASSWORD=$DB_PASSWORD
+    volumes:
+      - ./config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./wp-app:/var/www/html # Full wordpress project
+    labels:
+      - "traefik.frontend.rule=Host:$WORDPRESS_DOMAIN"
+    networks:
+      - internal
+      - web
+
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+  

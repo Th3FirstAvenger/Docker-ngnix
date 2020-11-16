@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta charset="UTF-8">
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
 	p.console{font-family: 'Roboto Mono', monospace;}
@@ -26,23 +27,23 @@
 
   <div class="terminal-home">					
     <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ whoami</p>
-    <p class="console">Marc Hortelano</p>
-    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ cat server_info.txt</p>
-    <p class="console">Usuari: profe</p>
-    <p class="console">contrasenya: chequejant</p>
-    <p class="console">=> Servei Wordpress </p>
-    <p class="console">DB_NAME=wordpress</p>
-    <p class="console">DB_USER=root</p>
-    <p class="console">DB_PASSWORD=password</p>
-    <p class="console">DB_HOST=mariaDB</p>
-    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ xdg-open tipologia.jpg</p>
+    <p class="console"><b>Marc Hortelano</b></p>
+    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ cat <b>Caracteristiques del servidor</b>.txt</p>
+    <p class="console">=> Utilitzo varis contenidors, tots ells estan dins un fitxer anomenat <u>docker-compose.yml</u>. Aquesta configuració la tinc allotjada en el meu repositori de github. Com podràs veure en la infraestructura utilitzo un proxy invers per augmentar la seguretat i redirigir el tràfic, això ho faig gràcies a un container anomenat <u>traefik</u>. Aquest em permet tenir els certificats SSL de forma automàtica i gestionar com he abans la xarxa interna. Per monitorar utilitzo un contenidor anomenat <u>pottava/docker-webui</u> i com podràs veure em permet veure els logs, el consum de cada contenidor i poder gestionar l'estat del contenidor (start/stop/restart). 
+    En quant el FTP utilitzo <u>stilliard/pure-ftpd</u>, aquest ho he hagut de configurar en una xarxa tipu host per poder fer les connexions i automàticament utilitza el protocol TLS. I comparteixo la carpeta que es troba en la web22 amb la del servidor ftp.
+    Finalment a part de les 2 webs; web11 i web22. He creat també un servei WordPress i Admirer per poder veure la base de dades allotjada en el WordPress
+    </p>  
+    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ xdg-open <b>tipología</b>.jpg</p>
     <code>
-    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ ls -la</p>
-    <p class="console">drwxr-xr-x 2 marchortelano marchortelano &nbsp;4096 Nov 11 &nbsp;2020 <a href="https://web22.mhr.itb">Instruccions</a><br></p>
-    <p class="console">drwxr-xr-x 2 marchortelano marchortelano &nbsp;4096 Nov 14&nbsp;2020 <a href="https://monitor.mhr.itb">Rendiment dels serveis</a><br></p>
-    <p class="console">drwxr-xr-x 2 marchortelano marchortelano &nbsp;4096 Nov 14&nbsp;2020 <a href="https://www.mhr.itb">Wordpress</a><br></p>
-    <p class="console">drwxr-xr-x 2 marchortelano marchortelano &nbsp;4096 Nov 14&nbsp;2020 <a href="https://db.mhr.itb">Base de dades</a><br></p>
-    <code>
+      <p style="text-align:center;border-radius: 10px"><img src="/img/Infr.png" alt="Infr" width="1024" height="750"></p>
+    <p class="console">marchortelano@mhr.itb [ SXI-082-01 ] ~/dockers$ ls -la enllaç-webs/</p>
+    <p class="console">https://web22.mhr.itb&nbsp;-&nbsp; <a href="https://web22.mhr.itb">Instruccions</a><br></p>
+    <p class="console">https://monitor.mhr.itb&nbsp;-&nbsp;<a href="https://monitor.mhr.itb">Rendiment dels serveis</a><br></p>
+    <p class="console">https://ftp.mhr.itb&nbsp;-&nbsp;<a href="ftp://ftp.mhr.itb">Veure els fitxers pujats al servidor FTP</a><br></p>
+    <p class="console">https://traefik.mhr.itb&nbsp;-&nbsp;<a href="https://traefik.mhr.itb">Proxy traefik</a><br></p>
+    <p class="console">https://www.mhr.itb&nbsp;-&nbsp;<a href="https://www.mhr.itb">Wordpress</a><br></p>
+    <p class="console">https://db.mhr.itb&nbsp;-&nbsp;<a href="https://db.mhr.itb/?server=mariadb&username=root">Base de dades</a><br></p>
+ <code>
   </div>
 </section>
 </body>

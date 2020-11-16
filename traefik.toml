@@ -3,9 +3,6 @@ defaultEntryPoints = ["http", "https"]
 [entryPoints]
   [entryPoints.dashboard]
     address = ":8080"
-    [entryPoints.dashboard.auth]
-      [entryPoints.dashboard.auth.basic]
-        users = ["profe:$apr1$K68Tgdav$RFqG0vEv//jNJ1BZNWjbq/"]
   [entryPoints.http]
     address = ":80"
       [entryPoints.http.redirect]

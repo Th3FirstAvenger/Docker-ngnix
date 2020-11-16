@@ -1,6 +1,7 @@
-version: '2'
+version: '3'
 
 services:
+  # Em fa de reverse proxy
   traefik:
     image: traefik:1.7.6-alpine
     restart: always
@@ -10,12 +11,48 @@ services:
     networks:
       - web
     volumes:
-      - $PWD/acme.json:/acme.json
-      - $PWD/traefik.toml:/traefik.toml 
+      - $PWD/acme.json:/acme.json # Ruta SSL 
+      - $PWD/traefik.toml:/traefik.toml # Fitxer de configuració
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - traefik.frontend.rule=Host:$MONITOR_DOMAIN
+      - "traefik.frontend.auth.basic=$ADMIN_USER:$HASHED_PASSWORD" # Demanar credencials per accedir previament exportades
+      - "traefik.docker.network=web"
+      - traefik.frontend.rule=Host:traefik.mhr.itb
       - traefik.port=8080
+
+  # Monitoritzar els sistemes
+  monit:
+    image: pottava/docker-webui
+    expose:
+      - "9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web
+    labels:
+      - "traefik.backend=monitor"
+      - "traefik.frontend.rule=Host:$MONITOR_DOMAIN"
+      - "traefik.docker.network=web"
+      - "traefik.enable=true"
+      - "traefik.port=9000"
+      - "traefik.default.protocol=http"
+      - "traefik.frontend.auth.basic=$ADMIN_USER:$HASHED_PASSWORD"
+  
+  ftpd-server:
+    container_name: ftpd-server
+    image: stilliard/pure-ftpd
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    environment:
+      PUBLICHOST: $FTP_DOMAIN
+      FTP_USER_NAME: $ADMIN_USER
+      FTP_USER_PASS: $ADMIN_PASSWORD
+      FTP_USER_HOME: /data/ftpd/
+    restart: on-failure
+    network_mode: host
+    volumes:
+      - "./web22/modificacions/:/data/ftpd/"
 
   web11:
     image: nginx
@@ -44,16 +81,17 @@ services:
     networks:
       - internal
       - web
-
   
   mariaDB:
     image: mariadb:latest
     restart: always
     volumes:
-     - ./database:/var/lib/mysql:rw
+     - database:/var/lib/mysql:rw
     expose:
      - "3306" 
     labels:
+     - "traefik.backend=mariadb"
+     - "traefik.docker.network=web"
      - "traefik.enable=false" 
     environment:
      - MYSQL_ROOT_PASSWORD=$MYSQL_PASS
@@ -67,6 +105,8 @@ services:
     ports:
       - 8090:8080
     labels:
+     - "traefik.backend=admirer"
+     - "traefik.docker.network=web"
      - "traefik.frontend.rule=Host:$DB_DOMAIN"
     depends_on:
      - mariaDB
@@ -86,10 +126,12 @@ services:
      - WORDPRESS_DB_USER=$DB_USER
      - WORDPRESS_DB_PASSWORD=$DB_PASSWORD
     volumes:
-      - ./config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-      - ./wp-app:/var/www/html # Full wordpress project
+      - ./wp/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./wp/wp-app:/var/www/html # Full wordpress project
     labels:
       - "traefik.frontend.rule=Host:$WORDPRESS_DOMAIN"
+      - "traefik.docker.network=web"
+      - "traefik.backend=wordpress"
     networks:
       - internal
       - web
@@ -100,4 +142,6 @@ networks:
     external: true
   internal:
     external: false
-  
+volumes:
+  portainer_data: {}
+  database:

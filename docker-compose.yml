@@ -29,7 +29,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - web
-    labels:
+    labels: # Creem els nivells necessaris per traefik
       - "traefik.backend=monitor"
       - "traefik.frontend.rule=Host:$MONITOR_DOMAIN"
       - "traefik.docker.network=web"
@@ -37,23 +37,25 @@ services:
       - "traefik.port=9000"
       - "traefik.default.protocol=http"
       - "traefik.frontend.auth.basic=$ADMIN_USER:$HASHED_PASSWORD"
-  
+
+# Servidor FTP  
   ftpd-server:
     container_name: ftpd-server
     image: stilliard/pure-ftpd
     ports:
-      - "21:21"
+      - "21:21" # Obro el port 21
       - "30000-30009:30000-30009"
     environment:
-      PUBLICHOST: $FTP_DOMAIN
-      FTP_USER_NAME: $ADMIN_USER
-      FTP_USER_PASS: $ADMIN_PASSWORD
+      PUBLICHOST: 0.0.0.0 # Per que es pugui connectar cualsevol equip
+      FTP_USER_NAME: $ADMIN_USER  # user previament assignat utilitzant la variable 
+      FTP_USER_PASS: $ADMIN_PASSWORD # password assignada previament en una variable 
       FTP_USER_HOME: /data/ftpd/
     restart: on-failure
     network_mode: host
     volumes:
       - "./web22/modificacions/:/data/ftpd/"
-
+      
+# Web utilitzant el servei nginx, proporciona la informació i descripció de la infraestuctura.
   web11:
     image: nginx
     restart: always
@@ -68,6 +70,7 @@ services:
       - internal
       - web
 
+# Web utilitzant el servei nginx mostra les instruccions a seguir 
   web22:
     image: nginx
     restart: always
@@ -81,6 +84,8 @@ services:
     networks:
       - internal
       - web
+  
+  # Serveis per la pagina wordpress
   
   mariaDB:
     image: mariadb:latest

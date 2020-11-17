@@ -51,7 +51,9 @@ services:
       FTP_USER_PASS: $ADMIN_PASSWORD # password assignada previament en una variable 
       FTP_USER_HOME: /data/ftpd/
     restart: on-failure
-    network_mode: host
+    networks:
+      - web
+      - internal
     volumes:
       - "./web22/modificacions/:/data/ftpd/"
       

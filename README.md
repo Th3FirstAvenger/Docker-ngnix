@@ -193,9 +193,6 @@ onHostRule = true
 domain = "mhr.itb"
 watch = true
 network = "web"
-© 2020 GitHub, Inc.
-Terms
-Privacy
 
 ```
 
@@ -205,8 +202,3 @@ I el certificat ssl ho guarda en el fitxer acme.json. Que és necessari assignar
 chmod 600 acme.json
 ```
 Finalment tenim el fitxer `.env` que em permet guardar les variables que utilitzo en el docker-compose.yml.
-
-
-```
-htpasswd -nb profe chequejant
-```

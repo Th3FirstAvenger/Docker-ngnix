@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /home/marc/Docker-nginx/
+
 if [[ $(docker network ls | grep web) ]]; then 
   echo -e "[i]  Eliminant network web..."
   docker network rm web
@@ -16,6 +18,8 @@ export HASHED_PASSWORD=$(openssl passwd -apr1 $ADMIN_PASSWORD)
 
 echo -e "[i] Assignant els permissos..."
 sudo chown -R $USER:$USER *
+
+cd /home/marc/Docker-nginx/
 
 # Creant la infraestuctura
 echo -e "[i]  Creant la infraestuctura..."

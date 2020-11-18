@@ -41,7 +41,9 @@ services:
 # Servidor FTP  
   ftpd-server:
     container_name: ftpd-server
-    image: stilliard/pure-ftpd
+    build: 
+      context: ./FTP/
+      dockerfile: Dockerfile
     ports:
       - "21:21" # Obro el port 21
       - "30000-30009:30000-30009"
